@@ -1,0 +1,148 @@
+Milk,225.50
+Bread,150.99
+Eggs,112.25
+Bananas,44.75
+Apples,59.80
+Chicken breasts,374.65
+Ground beef,261.55
+Salmon fillet,524.45
+Rice,186.10
+Pasta,96.75
+Tomatoes,150.99
+Potatoes,52.30
+Onions,37.15
+Carrots,59.80
+Broccoli,96.75
+Spinach,150.99
+Yogurt,74.65
+Cheese,283.95
+Cereal,261.55
+Orange juice,171.25
+Coffee,449.55
+Tea,225.50
+Sugar,150.99
+Flour,186.10
+Butter,207.05
+Ice cream,299.60
+Ground turkey,217.10
+Bacon,339.10
+Ham,299.60
+Lettuce,112.25
+Cucumbers,67.55
+Bell peppers,96.75
+Avocado,150.99
+Strawberries,225.50
+Blueberries,261.55
+Raspberries,374.65
+Blackberries,299.60
+Cherries,341.55
+Oranges,96.75
+Grapes,186.10
+Watermelon,374.65
+Pineapple,225.50
+Kiwi,74.65
+Mango,134.85
+Peaches,126.80
+Plums,104.35
+Apricots,171.25
+Cantaloupe,261.55
+Honeydew melon,299.60
+Lemons,52.30
+Limes,37.15
+Coconut,225.50
+Peanut butter,247.40
+Jelly,186.10
+Bread rolls,150.99
+Hot dog buns,112.25
+Hamburger buns,126.80
+Sliced bread,171.25
+Bagels,225.50
+Croissants,207.05
+English muffins,186.10
+Tortillas,150.99
+Pita bread,134.85
+Naan,186.10
+Granola bars,225.50
+Trail mix,261.55
+Nuts,374.65
+Pretzels,150.99
+Chips,186.10
+Crackers,207.05
+Popcorn,112.25
+Chocolate bars,225.50
+Candy,74.65
+Cookies,261.55
+Brownies,207.05
+Cake,374.65
+Pies,449.55
+Biscuits,150.99
+Waffles,186.10
+French fries,112.25
+Hot sauce,99.75
+Soy sauce,64.85
+Barbecue sauce,75.50
+Ketchup,77.90
+Mayonnaise,112.25
+Mustard,63.40
+Pickles,94.35
+Olives,149.70
+Salsa,85.25
+Sour cream,108.75
+Cream cheese,159.90
+Olive oil,299.99
+Canola oil,249.99
+Coconut oil,199.99
+Sesame oil,174.99
+Vegetable oil,149.99
+Honey,299.90
+Maple syrup,399.75
+Agave syrup,274.50
+Peanut oil,199.99
+Sunflower oil,224.99
+Almond oil,349.99
+Cashew oil,299.99
+Hazelnut oil,399.99
+Macadamia oil,449.99
+Walnut oil,374.99
+Ghee,199.99
+Sunflower seeds,99.90
+Pumpkin seeds,149.99
+Chia seeds,249.75
+Flax seeds,174.50
+Hemp seeds,299.90
+Poppy seeds,224.99
+Sesame seeds,199.99
+Quinoa,324.99
+Buckwheat,274.50
+Couscous,199.99
+Barley,149.90
+Millet,124.75
+Spaghetti,74.50
+Fusilli,99.90
+Penne,124.99
+Lasagna,149.99
+Macaroni,174.50
+Rigatoni,199.90
+Rotini,224.99
+Farfalle,249.75
+Ravioli,274.50
+Tortellini,299.99
+Cannelloni,324.99
+Gnocchi,349.90
+Rice noodles,174.50
+Egg noodles,199.90
+Soba noodles,224.99
+Udon noodles,249.75
+Ramen noodles,274.50
+Chickpeas,124.75
+Black beans,99.90
+Kidney beans,124.99
+Lentils,149.99
+Split peas,174.50
+Quinoa,199.90
+Bulgur,224.99
+Couscous,249.75
+Farro,274.50
+Barley,299.99
+Millet,324.99
+Sorghum,349
