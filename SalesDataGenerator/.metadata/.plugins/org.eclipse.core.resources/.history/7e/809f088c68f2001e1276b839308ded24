@@ -202,9 +202,8 @@ public class SalesFirstOrder {
 		Statement st = con.createStatement();
 		String sql = "select * from branch";
 		ResultSet rs =  st.executeQuery(sql);
-		 while(rs.next()){
-	           System.out.println("UserName:"+rs.getString("branch_id")+"\nbranch name:"+rs.getString("branch_name")+"\nbranch dvn:"+rs.getString("branch_division")+"\n");
-	       } 
+		
+		System.out.println(rs.next());
 		//random.setSeed(seed);
 		//fname_list = fileToList("fname.txt");
 		//lname_list = fileToList("lname.txt");

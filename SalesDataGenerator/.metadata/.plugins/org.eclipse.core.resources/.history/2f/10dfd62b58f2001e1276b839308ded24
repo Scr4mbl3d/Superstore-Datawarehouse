@@ -8,14 +8,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
 public class SalesFirstOrder {
-	private final static String url = "jdbc:postgresql://localhost/Sales";
-	private final static String user = "postgres";
+	private final static String url = "jdbc:postgresql://localhost:5432/salesdb";
+	private final static String user = "admin";
 	private final static String password = "1234";
 	
 	private static Random random = new Random();
@@ -200,22 +199,19 @@ public class SalesFirstOrder {
 
 		Connection con = DriverManager.getConnection(url,user,password);
 		Statement st = con.createStatement();
-		String sql = "select * from branch";
-		ResultSet rs =  st.executeQuery(sql);
-		 while(rs.next()){
-	           System.out.println("UserName:"+rs.getString("branch_id")+"\nbranch name:"+rs.getString("branch_name")+"\nbranch dvn:"+rs.getString("branch_division")+"\n");
-	       } 
-		//random.setSeed(seed);
-		//fname_list = fileToList("fname.txt");
-		//lname_list = fileToList("lname.txt");
-		//item_list = fileToDict("item.txt");
-		//branch_list = fileToList("branch.txt");
+		String sql = "select * from employees";
+		st.executeQuery(sql);
+		random.setSeed(seed);
+		fname_list = fileToList("fname.txt");
+		lname_list = fileToList("lnam;e.txt");
+		item_list = fileToDict("item.txt");
+		branch_list = fileToList("branch.txt");
 		// Adding department names to the ArrayList
-		//department_list.add("1, Sales, 3");
-		//department_list.add("2, Tech, 5");
-		//department_list.add("3, Admin, 1");
-		//department_list.add("4, Stock, 4");
-		//department_list.add("5. Logistics, 2");
+        department_list.add("1, Sales, 3");
+        department_list.add("2, Tech, 5");
+        department_list.add("3, Admin, 1");
+        department_list.add("4, Stock, 4");
+        department_list.add("5. Logistics, 2");
 		//customerTable();
 		//employeeTable();
 		//inventoryTable();
