@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
@@ -8,10 +9,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class SalesFirstOrder {
 	private final static String url = "jdbc:postgresql://localhost/Sales";
@@ -31,7 +34,7 @@ public class SalesFirstOrder {
 	private static int branch_count = 25;
 	private static int employee_count = 400;
 	private static int customer_count = 1000;
-	private static int dept_count = 5;
+	private static int dept_count = 4;
 	private static int employee_sales_offset = 300;
 	private static int inventory_count = 10000;
 	
@@ -40,7 +43,8 @@ public class SalesFirstOrder {
 	
 	private static LocalDate startDate = LocalDate.of(2024, 1, 1); // Define start date
 	private static LocalDate endDate = LocalDate.of(2024, 12, 31); // Define end date
-
+	static ZoneId defaultZoneId = ZoneId.systemDefault();
+	
 	private static ArrayList<String> fname_list;
 	private static ArrayList<String> lname_list;
 	private static ArrayList<String> branch_list;
@@ -92,135 +96,150 @@ public class SalesFirstOrder {
 		return list;
 	}
 	
-	
-	private static void customerTable() throws IOException
+		
+	private static void customerTable() throws IOException, SQLException
 	{
 		//Customer Table
-		String customer_fname;
-		String customer_lname;
-		String customer_dvns;
-		String customer_id;
-		String customer_phone;
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO customer VALUES (?, ?, ?, ?::dvns, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
+
 		for(int i=0; i<=customer_count; i++) 
 		{
-			customer_fname = fname_list.get(random.nextInt(fname_randomizer));
-			customer_lname = lname_list.get(random.nextInt(lname_randomizer));
-			customer_dvns = dvns[random.nextInt(6)];
-			customer_id = String.format("%06d", i);
-			customer_phone = phone_prefix[random.nextInt(7)] + String.format("%d",random.nextInt(mobile_randomizer));
-			System.out.println(customer_id +", "+customer_fname +", "+ customer_lname + ", " + customer_dvns + ", "+ customer_phone);
+			st.setInt(1,i+1);
+			st.setString(2,fname_list.get(random.nextInt(fname_randomizer)));
+			st.setString(3,lname_list.get(random.nextInt(lname_randomizer)));
+			st.setString(4 ,dvns[random.nextInt(6)]);
+			st.setString(5,phone_prefix[random.nextInt(7)] + String.format("%d",random.nextInt(mobile_randomizer)));
+			st.executeUpdate();		
 		}
+		con.close();
 	}
 	
 	
-	private static void employeeTable() throws IOException
+	private static void employeeTable() throws IOException, SQLException
 	{			
 		//Employee Table
-		String employee_fname;
-		String employee_lname;
-		String employee_id;
-		String branch_id;
-		String dept_id;
-		String month_salary;
-		for(int i=0; i<=employee_count; i++) 
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO employee VALUES (?, ?, ?, ?, ?, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
+		for (int i = 0; i < employee_count; i++)
 		{
-			employee_fname = fname_list.get(random.nextInt(fname_randomizer));
-			employee_lname = lname_list.get(random.nextInt(lname_randomizer));
-			employee_id = "3453" + String.format("%02d",i);
-			branch_id = String.format("%d", random.nextInt(branch_count)+1);
-			dept_id = String.format("%d", random.nextInt(dept_count)+1);
-			month_salary = String.format("%d",random.nextInt(min_salary,max_salary));
-			System.out.println(employee_id +", "+employee_fname +", "+ employee_lname + ", " + branch_id + ", " + dept_id+ ", " + month_salary);
+			st.setInt(1, 3453 + i);
+			st.setString(2, fname_list.get(random.nextInt(fname_randomizer)));
+			st.setString(3, lname_list.get(random.nextInt(lname_randomizer)));
+			st.setString(4,String.format("%d", random.nextInt(branch_count)+1));
+			st.setString(5,String.format("%d", random.nextInt(dept_count)+1));
+			st.setInt(6, random.nextInt(min_salary,max_salary));
+			st.executeUpdate();	
 		}
+		System.out.println("Inserted employee table records successfully");
+		con.close();
 	}
 	
-	private static void inventoryTable() throws IOException
+	private static void inventoryTable() throws IOException, SQLException
 	{			
-		//Inventory Table	
-		String product_id;
-		String branch_id;
-		String shipment_id;
+		//Inventory Table
 		String product_name;
-		Float price;
-		String stock_left;
-		LocalDate exp_date;
-		LocalDate arrival_date;
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO local_inventory VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
 		for(int i=0; i<=inventory_count; i++) 
 		{
-			product_id = String.format("%d", i+1);
-			branch_id = String.format("%d", random.nextInt(dept_count)+1);
-			shipment_id = String.format("%d",random.nextInt(shipment_randomizer_offset, shipment_randomizer));
+			st.setString(1, String.format("%d", i+1));
+			st.setString(2, String.format("%d", random.nextInt(dept_count)+1));
+			st.setString(4, String.format("%d",random.nextInt(shipment_randomizer_offset, shipment_randomizer)));
 			product_name = item_list.get(random.nextInt(item_randomizer));
-			price = item_dict.get(product_name);
-			stock_left = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
-			exp_date = generateRandomDate(startDate, endDate);
-			arrival_date = generateRandomDate(exp_date, endDate);
-			
-			System.out.println(product_id +", "+branch_id +", "+ shipment_id + ", " + product_name + ", " + price+ ", " + stock_left +", " +exp_date +", " + arrival_date);
-		}
+			st.setString(3, product_name);
+			st.setFloat(6,item_dict.get(product_name));
+			st.setDouble(7,Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
+			st.setDate(8, Date.valueOf( generateRandomDate(startDate, endDate)));
+			st.setDate(5,Date.valueOf( generateRandomDate(startDate, endDate)));
+			st.executeUpdate();
+		}		
+		System.out.println("Inserted local_inventory table records successfully");
+		con.close();
 	}
-	
-	
-	private static void orderDetailsTable() throws IOException
+	private static void orderDetailsTable() throws IOException, SQLException
 	{			
 		//Order Details Table
-		String order_id;
-		String product_id;
-		String customer_id;
-		String Salesman_id;
-		String Quantity;
-		String Order_Price;
-		LocalDate Order_date;
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO order_details VALUES (?, ?, ?, ?, ?, ?, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
 		for(int i=0; i<=inventory_count; i++) 
 		{
-			order_id = String.format("%d", i+452122);
-			product_id = String.format("%d", random.nextInt(inventory_count));
-			customer_id = String.format("%d",random.nextInt(customer_count));
-			Salesman_id = String.format("%d",random.nextInt(employee_sales_offset, employee_count));
-			Quantity = String.format("%d", random.nextInt(10));
-			Order_Price = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
-			Order_date = generateRandomDate(startDate, endDate);
-			
-			System.out.println(product_id +", "+order_id +", "+ product_id + ", " + customer_id + ", " + Salesman_id+ ", " + Quantity +", " +Order_Price +", " + Order_date);
+			st.setInt(1, i+452234);
+			st.setString(2, String.format("%d", random.nextInt(inventory_count)+1));
+			st.setString(3, String.format("%d",random.nextInt(customer_count)+1));
+			st.setInt(4, random.nextInt(3453 +employee_sales_offset, 3453 +employee_count));
+			st.setInt(5, random.nextInt(10));
+			st.setDouble(6, Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
+			st.setDate(7, Date.valueOf( generateRandomDate(startDate, endDate)));
+			st.executeUpdate();
 		}
+		System.out.println("Inserted order_details table records successfully");
+		con.close();
 	}
-	private static void branchTable() throws IOException
+	private static void branchTable() throws IOException, SQLException
 	{
-		System.out.println(branch_list);
-		
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO branch VALUES (?, ?, ?::dvns)";
+		PreparedStatement st = con.prepareStatement(sql);
+		String[] values = new String[3];
+		for(int i = 0; i < 25;i++)
+		{
+			values = branch_list.get(i).split(","); 
+			st.setString(1,values[0]);
+			st.setString(2,values[1]);
+			st.setString(3,values[2]);
+			st.executeUpdate();	
+			
+		}
+		System.out.println("Inserted branch table records successfully");
+		con.close();	
 	}
 	
-	private static void deptTable() throws IOException
+	private static void deptTable() throws IOException, SQLException
 	{
-		System.out.println(department_list);
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO department VALUES (?, ?, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
+		String[] values = new String[3];
+		for(int i = 0; i < 5;i++)
+		{
+			values = department_list.get(i).split(","); 
+			st.setString(1,values[0]);
+			st.setString(2,values[1]);
+			st.setInt(3,Integer.parseInt(values[2]));
+			st.executeUpdate();	
+			
+		}
+		System.out.println("Inserted department table records successfully");
+		con.close();
 	}
 	
 	public static void main(String args[])throws IOException, SQLException
 	{
 
-		Connection con = DriverManager.getConnection(url,user,password);
-		Statement st = con.createStatement();
-		String sql = "select * from branch";
-		ResultSet rs =  st.executeQuery(sql);
-		 while(rs.next()){
-	           System.out.println("UserName:"+rs.getString("branch_id")+"\nbranch name:"+rs.getString("branch_name")+"\nbranch dvn:"+rs.getString("branch_division")+"\n");
-	       } 
-		//random.setSeed(seed);
-		//fname_list = fileToList("fname.txt");
-		//lname_list = fileToList("lname.txt");
-		//item_list = fileToDict("item.txt");
-		//branch_list = fileToList("branch.txt");
+		random.setSeed(seed);
+		fname_list = fileToList("fname.txt");
+		lname_list = fileToList("lname.txt");
+		item_list = fileToDict("item.txt");
+		branch_list = fileToList("branch.txt");
 		// Adding department names to the ArrayList
-		//department_list.add("1, Sales, 3");
-		//department_list.add("2, Tech, 5");
-		//department_list.add("3, Admin, 1");
-		//department_list.add("4, Stock, 4");
-		//department_list.add("5. Logistics, 2");
+		department_list.add("1,Sales,3");
+		department_list.add("2,Tech,5");
+		department_list.add("3,Admin,1");
+		department_list.add("4,Stock,4");
+		department_list.add("5,Logistics,2");
+		
 		//customerTable();
-		//employeeTable();
-		//inventoryTable();
 		//branchTable();
 		//deptTable();
-		//orderDetailsTable();
+		
+		//employeeTable();
+		//inventoryTable();
+		
+		orderDetailsTable();
 		}
 }

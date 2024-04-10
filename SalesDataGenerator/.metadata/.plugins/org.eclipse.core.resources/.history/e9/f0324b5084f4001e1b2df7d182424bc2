@@ -6,9 +6,19 @@ import java.util.Map;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 public class SalesFirstOrder {
+	private final static String url = "jdbc:postgresql://localhost/Sales";
+	private final static String user = "postgres";
+	private final static String password = "1234";
+	
 	private static Random random = new Random();
 	private static int seed = 0;
 	
@@ -83,33 +93,44 @@ public class SalesFirstOrder {
 		return list;
 	}
 	
-	
-	private static void customerTable() throws IOException
+		
+	private static void customerTable() throws IOException, SQLException
 	{
-		//Customer Table	
+		//Customer Table
+		Connection con = DriverManager.getConnection(url,user,password);
+		String sql = "INSERT INTO customer VALUES (?, ?, ?, ?::dvns, ?)";
+		PreparedStatement st = con.prepareStatement(sql);
+
 		for(int i=0; i<=customer_count; i++) 
 		{
-			String customer_fname = fname_list.get(random.nextInt(fname_randomizer));
-			String customer_lname = lname_list.get(random.nextInt(lname_randomizer));
-			String customer_dvns = dvns[random.nextInt(6)];
-			String customer_id = String.format("%06d", i);
-			String customer_phone = phone_prefix[random.nextInt(7)] + String.format("%d",random.nextInt(mobile_randomizer));
-			System.out.println(customer_id +", "+customer_fname +", "+ customer_lname + ", " + customer_dvns + ", "+ customer_phone);
+			st.setInt(1,i+1);
+			st.setString(2,fname_list.get(random.nextInt(fname_randomizer)));
+			st.setString(3,lname_list.get(random.nextInt(lname_randomizer)));
+			st.setString(4 ,dvns[random.nextInt(6)]);
+			st.setString(5,phone_prefix[random.nextInt(7)] + String.format("%d",random.nextInt(mobile_randomizer)));
+			st.executeUpdate();		
 		}
+		con.close();
 	}
 	
 	
 	private static void employeeTable() throws IOException
 	{			
-		//Employee Table	
+		//Employee Table
+		String employee_fname;
+		String employee_lname;
+		String employee_id;
+		String branch_id;
+		String dept_id;
+		String month_salary;
 		for(int i=0; i<=employee_count; i++) 
 		{
-			String employee_fname = fname_list.get(random.nextInt(fname_randomizer));
-			String employee_lname = lname_list.get(random.nextInt(lname_randomizer));
-			String employee_id = "3453" + String.format("%02d",i);
-			String branch_id = String.format("%d", random.nextInt(branch_count)+1);
-			String dept_id = String.format("%d", random.nextInt(dept_count)+1);
-			String month_salary = String.format("%d",random.nextInt(min_salary,max_salary));
+			employee_fname = fname_list.get(random.nextInt(fname_randomizer));
+			employee_lname = lname_list.get(random.nextInt(lname_randomizer));
+			employee_id = "3453" + String.format("%02d",i);
+			branch_id = String.format("%d", random.nextInt(branch_count)+1);
+			dept_id = String.format("%d", random.nextInt(dept_count)+1);
+			month_salary = String.format("%d",random.nextInt(min_salary,max_salary));
 			System.out.println(employee_id +", "+employee_fname +", "+ employee_lname + ", " + branch_id + ", " + dept_id+ ", " + month_salary);
 		}
 	}
@@ -117,16 +138,24 @@ public class SalesFirstOrder {
 	private static void inventoryTable() throws IOException
 	{			
 		//Inventory Table	
+		String product_id;
+		String branch_id;
+		String shipment_id;
+		String product_name;
+		Float price;
+		String stock_left;
+		LocalDate exp_date;
+		LocalDate arrival_date;
 		for(int i=0; i<=inventory_count; i++) 
 		{
-			String product_id = String.format("%d", i+1);
-			String branch_id = String.format("%d", random.nextInt(dept_count)+1);
-			String shipment_id = String.format("%d",random.nextInt(shipment_randomizer_offset, shipment_randomizer));
-			String product_name = item_list.get(random.nextInt(item_randomizer));
-			Float price = item_dict.get(product_name);
-			String stock_left = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
-			LocalDate exp_date = generateRandomDate(startDate, endDate);
-			LocalDate arrival_date = generateRandomDate(exp_date, endDate);
+			product_id = String.format("%d", i+1);
+			branch_id = String.format("%d", random.nextInt(dept_count)+1);
+			shipment_id = String.format("%d",random.nextInt(shipment_randomizer_offset, shipment_randomizer));
+			product_name = item_list.get(random.nextInt(item_randomizer));
+			price = item_dict.get(product_name);
+			stock_left = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
+			exp_date = generateRandomDate(startDate, endDate);
+			arrival_date = generateRandomDate(exp_date, endDate);
 			
 			System.out.println(product_id +", "+branch_id +", "+ shipment_id + ", " + product_name + ", " + price+ ", " + stock_left +", " +exp_date +", " + arrival_date);
 		}
@@ -135,16 +164,23 @@ public class SalesFirstOrder {
 	
 	private static void orderDetailsTable() throws IOException
 	{			
-		//Inventory Table	
+		//Order Details Table
+		String order_id;
+		String product_id;
+		String customer_id;
+		String Salesman_id;
+		String Quantity;
+		String Order_Price;
+		LocalDate Order_date;
 		for(int i=0; i<=inventory_count; i++) 
 		{
-			String order_id = String.format("%d", i+452122);
-			String product_id = String.format("%d", random.nextInt(inventory_count));
-			String customer_id = String.format("%d",random.nextInt(customer_count));
-			String Salesman_id = item_list.get(random.nextInt(employee_sales_offset, employee_count));
-			String Quantity = String.format("%d", random.nextInt(10));
-			String Order_Price = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
-			LocalDate Order_date = generateRandomDate(startDate, endDate);
+			order_id = String.format("%d", i+452122);
+			product_id = String.format("%d", random.nextInt(inventory_count));
+			customer_id = String.format("%d",random.nextInt(customer_count));
+			Salesman_id = String.format("%d",random.nextInt(employee_sales_offset, employee_count));
+			Quantity = String.format("%d", random.nextInt(10));
+			Order_Price = String.format("%.0f", Math.abs(random.nextGaussian(2.0, 10.0)+2*10));
+			Order_date = generateRandomDate(startDate, endDate);
 			
 			System.out.println(product_id +", "+order_id +", "+ product_id + ", " + customer_id + ", " + Salesman_id+ ", " + Quantity +", " +Order_Price +", " + Order_date);
 		}
@@ -160,24 +196,25 @@ public class SalesFirstOrder {
 		System.out.println(department_list);
 	}
 	
-	public static void main(String args[])throws IOException
+	public static void main(String args[])throws IOException, SQLException
 	{
+
 		random.setSeed(seed);
 		fname_list = fileToList("fname.txt");
 		lname_list = fileToList("lname.txt");
 		item_list = fileToDict("item.txt");
 		branch_list = fileToList("branch.txt");
 		// Adding department names to the ArrayList
-        department_list.add("1, Sales, 3");
-        department_list.add("2, Tech, 5");
-        department_list.add("3, Admin, 1");
-        department_list.add("4, Stock, 4");
-        department_list.add("5. Logistics, 2");
+		department_list.add("1, Sales, 3");
+		department_list.add("2, Tech, 5");
+		department_list.add("3, Admin, 1");
+		department_list.add("4, Stock, 4");
+		department_list.add("5. Logistics, 2");
 		customerTable();
-		employeeTable();
-		inventoryTable();
-		branchTable();
-		deptTable();
-		orderDetailsTable();
+		//employeeTable();
+		//inventoryTable();
+		//branchTable();
+		//deptTable();
+		//orderDetailsTable();
 		}
 }
