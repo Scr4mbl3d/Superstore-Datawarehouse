@@ -4,7 +4,7 @@
 JAVA_DOWNLOAD_URL="https://download.java.net/openjdk/jdk8u43/ri/openjdk-8u43-linux-x64.tar.gz"
 
 # Define the directory where Java will be installed
-INSTALL_DIR="/opt/java"
+INSTALL_DIR="/home/hive/java"
 
 # Create the directory if it doesn't exist
 sudo mkdir -p $INSTALL_DIR
